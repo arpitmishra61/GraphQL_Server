@@ -1,0 +1,32 @@
+{
+  "cricketers": [
+    {
+      "id": "1",
+      "name": "virat kohli",
+      "type": "batsman",
+      "age": 34,
+      "team": "India"
+    },
+    {
+      "id": "2",
+      "name": "steve smith",
+      "type": "batsman",
+      "age": "31",
+      "team": "Australia"
+    },
+    {
+      "id": "3",
+      "name": "david warner",
+      "type": "batsman",
+      "age": 33,
+      "team": "Australia"
+    },
+    {
+      "id": "4",
+      "name": "shai hopes",
+      "type": "batsman",
+      "age": 26,
+      "team": "West Indies"
+    }
+  ]
+}

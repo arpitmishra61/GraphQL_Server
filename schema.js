@@ -1,19 +1,15 @@
+const axios=require("axios")
 const {
     GraphQLObjectType,
     GraphQLInt,
     GraphQLString,
     GraphQLSchema,
     GraphQLList,
-    GraphQLNotNull
+    GraphQLNonNull
 
 } =require("graphql")
 
-const cricketers=[
-    {id:"1",name:'virat kohli',type:"batsman",age:34,team:"India"},
-    {id:"2",name:' steve smith',type:"batsman",age:30,team:"Australia"},
-    {id:'3',name:'david warner',type:"batsman",age:33,team:"Australia"},
-    {id:'4',name:'shai hopes',type:"batsman",age:26,team:"West Indies"}
-]
+
 
 
 const CricketerType=new GraphQLObjectType({
@@ -37,7 +33,10 @@ const rootQuery=new GraphQLObjectType({
             id:{type:GraphQLString}
         },
         resolve(parentValue,args){
-            for(let i=0;i<customers.length;i++)
+            return axios.get("http://localhost:3000/cricketers").then(res=>{
+            const cricketers=res.data
+
+            for(let i=0;i<cricketers.length;i++)
             {
 
               if(cricketers[i].id==args.id)
@@ -45,12 +44,18 @@ const rootQuery=new GraphQLObjectType({
               
 
             }
+            }).catch((err)=>err)
+            
         }
     },
 cricketers:{
     type: new GraphQLList(CricketerType),
     resolve(parentValue,args){
-        return cricketers
+
+        return axios.get("http://localhost:3000/cricketers").then(res=>{
+            const cricketers=res.data
+            console.log(cricketers)
+        return cricketers}).catch((err)=>err)
 
     }
     
@@ -62,20 +67,66 @@ players:{
         },
 
         resolve(parentValue,args){
-            let players=[];
-            cricketers.forEach((player)=>{
-                if(player.team==args.team)
-                players.push(player)
-            })
-
-            return players
+            //Also can use default json server api methods
+            //e.g /id or /?q=value
+           return axios.get("http://localhost:3000/cricketers/?team="+args.team).then(res=>res.data
+            ).catch((err)=>err)
+           
+            
             
         }
 }
 } 
 });
 
+//Mutations
+const mutation=new GraphQLObjectType({
+    name:'mutation',
+    fields:{
+       addCricketer:{
+           type:CricketerType,
+           args:{ 
+        name:{type:new GraphQLNonNull(GraphQLString)},
+        type:{type:new GraphQLNonNull(GraphQLString)},
+        age:{type:new GraphQLNonNull(GraphQLString)},
+        team:{type:new GraphQLNonNull(GraphQLString)}},
+        resolve(parentValue,args){
+            return axios.post("http://localhost:3000/cricketers",{
+               
+               name:args.name,
+               age:args.age,
+               team:args.team,
+               type:args.type
+
+
+            }).then(res=>res.data)
+        }
+       },
+        deleteCricketer:{
+           type:CricketerType,
+           args:{ id:{type:new GraphQLNonNull(GraphQLString)}},
+        resolve(parentValue,args){
+            return axios.delete("http://localhost:3000/cricketers/"+args.id).then(res=>res.data)
+        }
+       },
+       updateCricketer:{
+           type:CricketerType,
+           args:{ id:{type:new GraphQLNonNull(GraphQLString)},
+           name:{type:GraphQLString},
+           age:{type:GraphQLString},
+           team:{type:GraphQLString},
+           type:{type:GraphQLString}
+        
+        },
+        resolve(parentValue,args){
+            return axios.patch("http://localhost:3000/cricketers/"+args.id,args).then(res=>res.data)
+        }
+       }
+    }
+})
+
 module.exports=new GraphQLSchema({
-    query:rootQuery
+    query:rootQuery,
+    mutation
 
 })

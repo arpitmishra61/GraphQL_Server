@@ -4,13 +4,17 @@
   "description": "A graph ql backend",
   "main": "index.js",
   "scripts": {
-    "dev:server": "nodemon server.js"
+    "dev:server": "nodemon server.js",
+    "json:server": "json-server --watch data.json"
+    
   },
   "author": "Arpit Mishra",
   "license": "MIT",
   "dependencies": {
+    "axios": "^0.19.1",
     "express": "^4.17.1",
     "express-graphql": "^0.9.0",
-    "graphql": "^14.5.8"
+    "graphql": "^14.5.8",
+    "json-server": "^0.15.1"
   }
 }
